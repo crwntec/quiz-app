@@ -2,9 +2,11 @@
 
 import { useState } from "react";
 import PrestartModal from "./PrestartModal";
+import EvalModal from "./EvalModal";
 
 export default function QuizClient({ quizData }) {
   const [quizStarted, setQuizStarted] = useState(false);
+  const [quizFinished, setQuizFinished] = useState(false)
   const [questionIndex, setQuestionIndex] = useState(0);
 
   const [points, setPoints] = useState(0);
@@ -15,10 +17,10 @@ export default function QuizClient({ quizData }) {
     if (answer === quizData.questions[questionIndex].answer) {
       setPoints(points + 1);
     }
-    console.log(points)
 
     if (questionIndex === quizData.questions.length - 1) {
-      setQuizStarted(false);
+      setQuestionIndex(0)
+      setQuizFinished(true)
       console.log(points)
     } else {
       setQuestionIndex(questionIndex + 1);
@@ -29,6 +31,8 @@ export default function QuizClient({ quizData }) {
     <div>
       {!quizStarted ? (
         <PrestartModal data={quizData} setReady={setQuizStarted} />
+      ) : quizFinished ? (
+        <EvalModal data={quizData} openModal={quizFinished} points={points} />
       ) : (
         <div className="flex justify-center">
           <div className="container rounded-lg bg-base-100 p-6 m-4 w-screen">
@@ -64,7 +68,7 @@ export default function QuizClient({ quizData }) {
                 onClick={() => validateQuestion()}
                 className="btn btn-primary"
               >
-                Submit Answer
+               { questionIndex == quizData.questions.length -1 ?  "Finish Quiz " : "Submit Answer"}
               </button>
             </div>
           </div>

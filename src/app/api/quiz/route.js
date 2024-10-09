@@ -30,7 +30,7 @@ export const createQuiz = async (questions) => {
 export const getQuiz = async (code) => {
   const quiz = await prisma.quiz.findUnique({
     where: {
-      code: code,
+      code: code.toLowerCase(),
     },
     include: {
       questions: true,

@@ -14,7 +14,8 @@ model Quiz {
   id        Int        @id @unique @default(autoincrement())
   code      String     @unique @default(cuid())
   questions Question[]
-  author    String
+  author    String     @default("Anonymous")
+  title     String     @default("New Quiz")
   createdAt DateTime   @default(now())
 }
 
