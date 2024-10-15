@@ -24,5 +24,7 @@ model Question {
   quizId   Int
   quiz     Quiz   @relation(fields: [quizId], references: [id])
   question String
+  options  String @default("")
+  image    String @default("")
   answer   String
 }

@@ -10,9 +10,9 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@lottiefiles/react-lottie-player": "^3.5.4",
     "@paralleldrive/cuid2": "^2.2.2",
     "@prisma/client": "^5.20.0",
-    "lottie-web": "^5.12.2",
     "next": "14.2.14",
     "react": "^18",
     "react-dom": "^18"
