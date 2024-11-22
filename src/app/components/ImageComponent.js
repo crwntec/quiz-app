@@ -20,6 +20,7 @@ export default function ImageComponent({ image, width, height }) {
                 priority
                 width={width}
                 height={height}
+                alt="Question Image. If you can't see this you are stupid and/or blind"
             />
         </div>
     );

@@ -1,6 +1,6 @@
 "use client";
 import { useState } from "react";
-import { createQuiz } from "../api/quiz/route.js";
+import { createQuiz } from "../api/quiz/actions.js";
 
 export default function Page() {
   const [file, setFile] = useState(null);
@@ -8,67 +8,54 @@ export default function Page() {
   const [fileSuccess, setFileSuccess] = useState(false);
   const [code, setCode] = useState("");
 
-  const processFile = () => {
-    if (file) {
-      if (file.name.endsWith(".csv")) {
-        const reader = new FileReader();
-        reader.onload = (event) => {
-          const csvData = event.target.result;
-          const rows = csvData.split("\n");
+  const processFile = (file) => {
+    if (file.name.endsWith(".csv")) {
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        const csvData = event.target.result;
+        const rows = csvData.split("\n");
 
-          // First row: Title and author (split by ";")
-          const [title, author] = rows[0].split(";");
+        // Extract title and author
+        const [title, author] = rows[0].split(";");
+        if (!title || !author) {
+          alert("Malformed file: Missing title or author.");
+          return;
+        }
 
-          // Second row: Headers (ignoring line-end variations)
-          const headers = rows[1].trim();
-          if (!headers.startsWith("Question;Options;Image;Answer")) {
-            alert("Malformed file: Incorrect headers.");
-            return;
-          }
+        // Check headers
+        const headers = rows[1].trim();
+        if (!headers.startsWith("Question;Options;Image;Answer")) {
+          alert("Malformed file: Incorrect headers.");
+          return;
+        }
 
-          // Initialize questions array
-          let questions = [];
-
-          // Loop through the rest of the rows (from index 2 onwards)
-          for (let i = 2; i < rows.length; i++) {
-            const row = rows[i].trim();
-            if (!row) continue; // Skip empty rows
-
-            const fields = row.split(";");
-
-            // Handle malformed rows
-            if (fields.length < 4) {
-              console.warn(`Malformed row: ${row}`);
-              continue;
-            }
-
-            const question = fields[0];
-            const options = fields[1];
-            const image = fields[2];
-            const answer = fields[3].replace("\r", "");
-
-            const cleanedOptions = options.replace(/"/g, "")
-
-            // Add the question to the array
-            questions.push({
-              question: question,
-              options: cleanedOptions,
-              image: image,
-              answer: answer,
+        // Extract questions
+        const questions = rows.slice(2).reduce((acc, row) => {
+          const fields = row.split(";");
+          if (fields.length >= 4) {
+            acc.push({
+              question: fields[0],
+              options: fields[1].replace(/"/g, ""), // Clean quotes
+              image: fields[2],
+              answer: fields[3].replace("\r", ""), // Remove line endings
             });
           }
-          console.log(questions)
-          if (questions.length > 0) {
-            createQuiz(title, author, questions).then((quizCode) =>
-              setCode(quizCode)
-            );
+          return acc;
+        }, []);
+
+        if (questions.length > 0) {
+          // Create the quiz and fetch the generated code
+          createQuiz(title, author, questions).then((quizCode) => {
+            setCode(quizCode);
             setFileSuccess(true);
-          }
-        };
-        reader.readAsText(file);
-      } else {
-        alert("Please upload a .csv file");
-      }
+          });
+        } else {
+          alert("No valid questions found in the file.");
+        }
+      };
+      reader.readAsText(file);
+    } else {
+      alert("Please upload a valid .csv file.");
     }
   };
 
@@ -93,7 +80,7 @@ export default function Page() {
             if (item.kind === "file") {
               const file = item.getAsFile();
               setFile(file);
-              processFile();
+              processFile(file);
             }
           }
         }}
@@ -110,7 +97,7 @@ export default function Page() {
           className="hidden"
           onChange={(e) => {
             setFile(e.target.files[0]);
-            processFile();
+            processFile(file);
           }}
         />
         {fileEnter && <div className="text-sky-500">Drop file here</div>}

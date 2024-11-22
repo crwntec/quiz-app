@@ -1,13 +1,23 @@
-import { getQuiz } from "@/app/api/quiz/route";
+import { getQuiz } from "@/app/api/quiz/actions";
 import { notFound } from "next/navigation";
 import QuizClient from "./QuizClient";
-export default async function Page({ params }) {
+import { createResult } from "@/app/api/quiz/actions";
+export default async function Page(props) {
+    const params = await props.params;
     const data = await getQuiz(params.slug);
 
     if (!data) {
         return notFound()
     }
+
+    const addResult = async (name, points) => {
+        "use server";
+        const quizId = data.id;
+        console.log(points)
+        createResult(quizId, name, points);
+    }
+
     return <div>
-        <QuizClient quizData={data} />
+        <QuizClient quizData={data} onFinished={addResult} />
     </div>;
 }

@@ -3,7 +3,7 @@
 import { useEffect } from "react";
 import AnimPlayer from "@/app/components/AnimPlayer";
 
-export default function EvalModal({ data, openModal, points }) {
+export default function EvalModal({ data, openModal, points, name }) {
   useEffect(() => {
     if (openModal) {
       document.getElementById("modal1").showModal();
@@ -24,7 +24,7 @@ export default function EvalModal({ data, openModal, points }) {
                 }
               />
             </div>
-            <h1 className="text-2xl font-bold text-center mt-12">Congratulations!</h1>
+            <h1 className="text-2xl font-bold text-center mt-12">Congratulations {name}!</h1>
             <h2 className="text-xl text-center">
               You passed with
               <b>

@@ -1,8 +1,10 @@
 "use client";
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 
 export default function Home() {
   const [code, setCode] = useState("");
+  const router = useRouter();
 
   return (
     <>
@@ -33,6 +35,20 @@ export default function Home() {
         <div className="text-center italic text-sm mt-10">
           The Quiz Code is shared by your teacher
         </div>
+        <div className="mt-10 grid grid-cols-1 gap-4 sm:grid-cols-2">
+            <button
+              onClick={() => router.push("/upload")} // Replace with actual upload logic
+              className="btn btn-outline btn-secondary"
+            >
+              Upload Quiz
+            </button>
+            <button
+              onClick={() => router.push("/quiz/list")} // Replace with actual view logic
+              className="btn btn-outline btn-accent"
+            >
+              View Results
+            </button>
+          </div>
       </div>
       <footer className="fixed bottom-0">
         <div className="text-center text-sm mb-4">
