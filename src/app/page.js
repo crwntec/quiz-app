@@ -9,7 +9,7 @@ export default function Home() {
   return (
     <>
       <div className="">
-        <div className="text-center text-5xl font-bold mb-20">Quiz App</div>
+        <div className="text-center text-5xl font-bold mb-20">QuizLy</div>
         <div className="flex justify-center">
           <input
             type="text"
