@@ -13,7 +13,6 @@ export default async function Page(props) {
     const addResult = async (name, points) => {
         "use server";
         const quizId = data.id;
-        console.log(points)
         createResult(quizId, name, points);
     }
 

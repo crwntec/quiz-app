@@ -63,7 +63,6 @@ export default function Register({ onCreateRecord }) {
     
     const isValid = validateForm(data);
     if (isValid) {
-      console.log("Form data is valid:", data);
       onCreateRecord(data);
     }
   }
