@@ -13,13 +13,20 @@ const SECRET_KEY = new TextEncoder().encode(
 
 // Create a new user and generate a token
 export const createUser = async (name, email, passwordHash) => {
-  const user = await prisma.user.create({
-    data: {
-      name: name,
-      email: email,
-      passwordHash: passwordHash,
-    },
-  });
+  try {
+    const user = await prisma.user.create({
+      data: {
+        name: name,
+        email: email,
+        passwordHash: passwordHash,
+      },
+    });
+    return user;
+  } catch (error) {
+    if (error.code === "P2002") {
+      return null;
+    }
+  }
 
   const token = await new SignJWT({ id: user.id, email: user.email })
     .setProtectedHeader({ alg })

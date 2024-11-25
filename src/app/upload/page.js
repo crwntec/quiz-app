@@ -17,8 +17,8 @@ export default function Page() {
 
         // Extract title and author
         const [title, author] = rows[0].split(";");
-        if (!title || !author) {
-          alert("Malformed file: Missing title or author.");
+        if (!title) {
+          alert("Malformed file: Missing title.");
           return;
         }
 
@@ -45,7 +45,7 @@ export default function Page() {
 
         if (questions.length > 0) {
           // Create the quiz and fetch the generated code
-          createQuiz(title, author, questions).then((quizCode) => {
+          createQuiz(title, questions).then((quizCode) => {
             setCode(quizCode);
             setFileSuccess(true);
           });

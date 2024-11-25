@@ -17,6 +17,7 @@ export default function Register({ onCreateRecord }) {
     email: false,
     password: false,
     confirmPassword: false,
+    userExists: false,
   });
 
   const validateForm = (data) => {
@@ -63,7 +64,10 @@ export default function Register({ onCreateRecord }) {
     
     const isValid = validateForm(data);
     if (isValid) {
-      onCreateRecord(data);
+      const error = await onCreateRecord(data);
+      if (error) {
+        setFormErrors({ ...formErrors, userExists: true });
+      }
     }
   }
 
@@ -100,6 +104,12 @@ export default function Register({ onCreateRecord }) {
           type="password"
           isValid={!formErrors.confirmPassword}
           errorMsg="ⓘ Passwords do not match"
+        />
+        <FormInput
+          name="userExists"
+          type="hidden"
+          isValid={!formErrors.userExists}
+          errorMsg="ⓘ A user with this email already exists"
         />
         <div className="form-control mt-6">
           <button type="submit" className="btn btn-primary">

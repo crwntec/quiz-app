@@ -11,6 +11,7 @@ export default async function Page() {
       data.email,
       await createHash(data.password)
     );
+    if (!user) return true;
     if (user.token) {
       (await cookies()).set({
         name: "token",
