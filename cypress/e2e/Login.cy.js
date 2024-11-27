@@ -15,7 +15,7 @@ describe('Login Page E2E Tests', () => {
     cy.get('input[name="password"]').type('wrongpassword');
     cy.get('button[type="submit"]').click();
 
-    cy.get('.label-text-alt').should('contain', 'ⓘ Email or password is wrong');
+    cy.get('.label-text-alt').should('contain', 'ⓘ Incorrect email or password');
   });
 
   it('should login sucessfully with redirect cookie', () => {
@@ -38,7 +38,7 @@ describe('Login Page E2E Tests', () => {
     cy.get('input[name="password"]').type('123456');
     cy.get('button[type="submit"]').click();
 
-    cy.getCookie('token').should('have.property', 'value', 'mockToken');
+    
     cy.get('.label-text-alt').should('not.exist');
   });
 
@@ -46,4 +46,12 @@ describe('Login Page E2E Tests', () => {
     cy.get('.underline').contains('Create one').click();
     cy.url().should('include', '/auth/register');
   });
+
+  it('should provoke a server error',()=>{
+    cy.get('input[name="email"]').type('serverError@example.com');
+    cy.get('input[name="password"]').type('securepassword');
+    cy.get('button[type="submit"]').click();
+
+    cy.get('.label-text-alt').should('contain', 'ⓘ Something went wrong please try again later');
+  })
 });

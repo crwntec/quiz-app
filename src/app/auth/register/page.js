@@ -6,16 +6,16 @@ import { cookies } from "next/headers";
 export default async function Page() {
   async function onCreateRecord(data) {
     "use server";
-    const user = await createUser(
+    const { user, token, error } = await createUser(
       data.name,
       data.email,
       await createHash(data.password)
     );
-    if (!user) return true;
-    if (user.token) {
+    if (error) return error;
+    if (token) {
       (await cookies()).set({
         name: "token",
-        value: user.token,
+        value: token,
         path: "/",
         httpOnly: true,
         sameSite: "strict",

@@ -52,16 +52,28 @@ export default function Register({ onCreateRecord }) {
   async function handleSubmit(e) {
     e.preventDefault();
     if (loading) return;
+
     const formData = new FormData(e.target);
     const data = Object.fromEntries(formData);
-    
+
     const isValid = validateForm(data);
     if (isValid) {
       setLoading(true);
-      const error = await onCreateRecord(data);
-      setLoading(false)
-      if (error) {
-        setFormErrors({ ...formErrors, userExists: true });
+      try {
+        const error = await onCreateRecord(data);
+        if (error === "userExists") {
+          setFormErrors((prevErrors) => ({ ...prevErrors, userExists: true }));
+        } else if (error === "serverError") {
+          setFormErrors((prevErrors) => ({ ...prevErrors, serverError: true }));
+        }
+      } catch (err) {
+        console.error(err);
+        setFormErrors((prevErrors) => ({
+          ...prevErrors,
+          serverError: true,
+        }));
+      } finally {
+        setLoading(false);
       }
     }
   }
@@ -82,7 +94,7 @@ export default function Register({ onCreateRecord }) {
         <FormInput
           label="Email"
           name="email"
-          type="email"
+          type="text"
           isValid={!formErrors.email}
           errorMsg="ⓘ Please enter a valid email"
         />
@@ -100,12 +112,14 @@ export default function Register({ onCreateRecord }) {
           isValid={!formErrors.confirmPassword}
           errorMsg="ⓘ Passwords do not match"
         />
-        <FormInput
-          name="userExists"
-          type="hidden"
-          isValid={!formErrors.userExists}
-          errorMsg="ⓘ A user with this email already exists"
-        />
+        {formErrors.userExists && (
+          <p className="label-text-alt mt-4 text-red-500 text-sm">
+            ⓘ A user with this email already exists
+          </p>
+        )}
+        {formErrors.serverError && (
+          <p className="label-text-alt mt-4 text-red-500 text-sm">ⓘ Something went wrong please try again later</p>
+        )}
         <div className="form-control mt-6">
           <button type="submit" className="btn btn-primary">
             {loading ? (

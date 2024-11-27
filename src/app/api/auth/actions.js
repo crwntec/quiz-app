@@ -16,8 +16,11 @@ export const createUser = async (name, email, passwordHash) => {
   if (email == 'johndoe@example.com' && process.env.NODE_ENV !== 'production') {
     return { user: { id: 1, email: 'test@test.com' }, token: 'mockToken' };
   }
-  if (email == 'johndoe2@example.com' && process.env.NODE_ENV !== 'production') {
-    return null;
+  if (email == 'userExists@example.com' && process.env.NODE_ENV !== 'production') {
+    return {user: null, token: null, error: 'userExists'};
+  }
+  if (email == 'serverError@example.com' && process.env.NODE_ENV !== 'production') {
+    return {user: null, token: null, error: 'serverError'};
   }
   try {
     const user = await prisma.user.create({
@@ -27,22 +30,23 @@ export const createUser = async (name, email, passwordHash) => {
         passwordHash: passwordHash,
       },
     });
-    return user;
+    const token = await new SignJWT({ id: user.id, email: user.email })
+      .setProtectedHeader({ alg })
+      .setIssuedAt()
+      .setIssuer("urn:example:issuer")
+      .setAudience("urn:example:audience")
+      .setExpirationTime("2h")
+      .sign(SECRET_KEY);
+  
+    return { user, token };
   } catch (error) {
     if (error.code === "P2002") {
-      return null;
+      return { user: null, token: null, error: "userExists" };
     }
+    console.error(error);
+    return { user: null, token: null, error: "serverError" };
   }
 
-  const token = await new SignJWT({ id: user.id, email: user.email })
-    .setProtectedHeader({ alg })
-    .setIssuedAt()
-    .setIssuer("urn:example:issuer")
-    .setAudience("urn:example:audience")
-    .setExpirationTime("2h")
-    .sign(SECRET_KEY);
-
-  return { user, token };
 };
 
 // Log in a user and return a JWT token
@@ -50,30 +54,38 @@ export const loginUser = async (email, password) => {
   if (email == 'test@test.com' && password == '123456' && process.env.NODE_ENV !== 'production') {
     return { user: { id: 1, email: 'test@test.com' }, token: 'mockToken' };
   }
-  const user = await prisma.user.findUnique({
-    where: {
-      email: email,
-    },
-  });
-  if (!user) {
-    return null;
+  if (email == 'serverError@example.com' && process.env.NODE_ENV !== 'production') {
+    return {user: null, token: null, error: 'serverError'};
   }
-
-  const isPasswordValid = await bcrypt.compare(password, user.passwordHash);
-  if (!isPasswordValid) {
-    return null;
+  try {
+    const user = await prisma.user.findUnique({
+      where: {
+        email: email,
+      },
+    });
+    if (!user) {
+      return { user:null, token: null, error: "invalidCredentials"};
+    }
+  
+    const isPasswordValid = await bcrypt.compare(password, user.passwordHash);
+    if (!isPasswordValid) {
+      return null;
+    }
+  
+    // Generate a new token for the user
+    const token = await new SignJWT({ id: user.id, email: user.email })
+      .setProtectedHeader({ alg })
+      .setIssuedAt()
+      .setIssuer("urn:example:issuer")
+      .setAudience("urn:example:audience")
+      .setExpirationTime("2h")
+      .sign(SECRET_KEY);
+  
+    return { user, token, error: null }; 
+  } catch (error) {
+    console.error(error);
+    return { user: null, token: null, error: "serverError" };
   }
-
-  // Generate a new token for the user
-  const token = await new SignJWT({ id: user.id, email: user.email })
-    .setProtectedHeader({ alg })
-    .setIssuedAt()
-    .setIssuer("urn:example:issuer")
-    .setAudience("urn:example:audience")
-    .setExpirationTime("2h")
-    .sign(SECRET_KEY);
-
-  return { user, token };
 };
 
 // Validate the JWT token

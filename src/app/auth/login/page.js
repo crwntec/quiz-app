@@ -6,7 +6,10 @@ export default async function Page() {
   async function onLogin(data) {
     "use server";
     try {
-      const { user, token } = await loginUser(data.email, data.password);
+      const { user, token, error } = await loginUser(data.email, data.password);
+      if (error) {
+        return error;
+      }
       if (token) {
         (await cookies()).set({
           name: "token",
