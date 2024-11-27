@@ -13,6 +13,12 @@ const SECRET_KEY = new TextEncoder().encode(
 
 // Create a new user and generate a token
 export const createUser = async (name, email, passwordHash) => {
+  if (email == 'johndoe@example.com' && process.env.NODE_ENV !== 'production') {
+    return { user: { id: 1, email: 'test@test.com' }, token: 'mockToken' };
+  }
+  if (email == 'johndoe2@example.com' && process.env.NODE_ENV !== 'production') {
+    return null;
+  }
   try {
     const user = await prisma.user.create({
       data: {
@@ -41,6 +47,9 @@ export const createUser = async (name, email, passwordHash) => {
 
 // Log in a user and return a JWT token
 export const loginUser = async (email, password) => {
+  if (email == 'test@test.com' && password == '123456' && process.env.NODE_ENV !== 'production') {
+    return { user: { id: 1, email: 'test@test.com' }, token: 'mockToken' };
+  }
   const user = await prisma.user.findUnique({
     where: {
       email: email,

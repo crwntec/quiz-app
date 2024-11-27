@@ -3,14 +3,7 @@ import { useState } from "react";
 import FormInput from "@/app/components/FormInput";
 
 export default function Register({ onCreateRecord }) {
-  const [formSubmitted, setFormSubmitted] = useState(false);
-
-  const [formValues, setFormValues] = useState({
-    name: "",
-    email: "",
-    password: "",
-    confirmPassword: "",
-  });
+  const [loading, setLoading] = useState(false);
 
   const [formErrors, setFormErrors] = useState({
     name: false,
@@ -58,13 +51,15 @@ export default function Register({ onCreateRecord }) {
 
   async function handleSubmit(e) {
     e.preventDefault();
-    setFormSubmitted(true);
+    if (loading) return;
     const formData = new FormData(e.target);
     const data = Object.fromEntries(formData);
     
     const isValid = validateForm(data);
     if (isValid) {
+      setLoading(true);
       const error = await onCreateRecord(data);
+      setLoading(false)
       if (error) {
         setFormErrors({ ...formErrors, userExists: true });
       }
@@ -113,7 +108,11 @@ export default function Register({ onCreateRecord }) {
         />
         <div className="form-control mt-6">
           <button type="submit" className="btn btn-primary">
-            Register
+            {loading ? (
+              <span className="loading loading-spinner loading-lg bg-primary-content"></span>
+            ) : (
+              <span>Register</span>
+            )}
           </button>
         </div>
       </form>

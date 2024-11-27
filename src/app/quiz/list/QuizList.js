@@ -28,13 +28,13 @@ export default function QuizList({ quizData }) {
       )}
       <h1 className="text-2xl font-bold">All your quizzes</h1>
       <h2 className="text-xl italic mb-4">Select one to view results</h2>
-      <ul className="menu bg-base-200 rounded-box w-96">
+      {quizData.length > 0 ? <ul className="menu bg-base-200 rounded-box w-96">
         {quizData.map((quiz) => (
           <li key={quiz.code}>
             <a onClick={() => setSelected(quiz)}>{quiz.title}</a> {/* Pass the full quiz object */}
           </li>
         ))}
-      </ul>
+      </ul> : <p className="italic">No quizzes found</p>}
     </>
   );
 }

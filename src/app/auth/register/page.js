@@ -23,7 +23,7 @@ export default async function Page() {
         secure: process.env.NODE_ENV === "production",
         expires: new Date(Date.now() + 60 * 60 * 24 * 30 * 1000),
       });
-      redirect("/auth/login");
+      redirect("/");
     }
   }
   return (
