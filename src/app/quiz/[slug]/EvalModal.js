@@ -13,7 +13,7 @@ export default function EvalModal({ data, openModal, points, name }) {
   return (
     <dialog id="modal1" className="modal modal-open">
       <div className="modal-box">
-        {points > 0 ? (
+        {points > Math.ceil(data.questions.length * 0.6) ? (
           <div>
             <div className="flex justify-center flex-col h-[200px]">
               <AnimPlayer
@@ -45,21 +45,15 @@ export default function EvalModal({ data, openModal, points, name }) {
                 }
               />
             </div>
-            <h1 className="text-2xl font-bold text-center mt-12">
-              Not your day huh? Only {points} points
-            </h1>
+            {points > 0 ? <h1 className="text-2xl font-bold text-center mt-12">
+              Not your day huh? Only {points} {points === 1 ? "point" : "points"}
+            </h1> : <h1 className="text-2xl font-bold text-center mt-12">You are a failure. 0 Points</h1>}
           </div>
         )}
         <div className="modal-action">
           <a href="/" className="btn btn-primary">
-            Quit
+            Ok
           </a>
-          <button
-            onClick={() => window.location.reload()}
-            className="btn btn-secondary"
-          >
-            Retake Quiz
-          </button>
         </div>
       </div>
     </dialog>

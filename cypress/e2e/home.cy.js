@@ -6,9 +6,9 @@ describe('UI Check', () => {
     cy.visit('http://localhost:3000/')
   })
   it('Link to upload page works', () => {
-    cy.get('.btn-secondary').contains('Upload Quiz').click()
+    cy.get('.btn-primary').contains('Upload Quiz').click()
   })
   it ('Link to list page works', () => {
-    cy.get('.btn-accent').contains('View Results').click()
+    cy.get('.btn-secondary').contains('View Results').click()
   })
 })

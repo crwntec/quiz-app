@@ -8,7 +8,7 @@ export default async function Page() {
     try {
       const { user, token, error } = await loginUser(data.email, data.password);
       if (error) {
-        return error;
+        return {error: error};
       }
       if (token) {
         (await cookies()).set({
@@ -23,13 +23,13 @@ export default async function Page() {
         });
       }
       const redirectURL = (await cookies()).get("redirect")?.value;
-      if (redirectURL) {
-        return redirectURL;
+      if (redirectURL && user) {
+        return {redirectURL: redirectURL};
       } else {
-        return "/";
+        return {redirectURL: "/"};
       }
     } catch (error) {
-      return null;
+      return {error: "serverError"};
     }
   }
   return (

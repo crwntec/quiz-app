@@ -69,7 +69,7 @@ export const loginUser = async (email, password) => {
   
     const isPasswordValid = await bcrypt.compare(password, user.passwordHash);
     if (!isPasswordValid) {
-      return null;
+      return { user: null, token: null, error: "invalidCredentials" };
     }
   
     // Generate a new token for the user

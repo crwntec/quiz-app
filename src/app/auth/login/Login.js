@@ -1,6 +1,7 @@
 "use client";
 import { useState } from "react";
 import FormInput from "@/app/components/FormInput";
+import { useRouter } from "next/navigation";
 
 export default function Login({ onLogin }) {
   const [formErrors, setFormErrors] = useState({
@@ -8,6 +9,8 @@ export default function Login({ onLogin }) {
     serverError: false,
   });
   const [loading, setLoading] = useState(false);
+
+  const router = useRouter();
 
   async function handleSubmit(e) {
     e.preventDefault();
@@ -24,8 +27,8 @@ export default function Login({ onLogin }) {
 
     setLoading(true);
     try {
-      const error = await onLogin(data);
-      console.log(error)
+      const {redirectURL, error} = await onLogin(data);
+      console.log(redirectURL, error);
       if (error === "invalidCredentials") {
         setFormErrors((prevErrors) => ({
           ...prevErrors,
@@ -36,6 +39,9 @@ export default function Login({ onLogin }) {
           ...prevErrors,
           serverError: true,
         }));
+      }
+      if (redirectURL) {
+        window.location.href = redirectURL;
       }
     } catch (err) {
       console.error("Login error:", err);

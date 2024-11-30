@@ -9,10 +9,16 @@ export default function QuizDetailModal({ data, openModal, setOpenModal }) {
   return (
     <dialog id="modal1" className={`modal ${openModal ? "modal-open" : ""}`}>
       <div className="modal-box">
-        <h3 className="font-bold text-lg">{data.title}</h3>
+        <span>
+          <h3 className="font-bold text-lg">{data.title} <span className="text-primary"> #{data.code.toUpperCase()}</span></h3>
+        </span>
         <p className="py-4">
           <span className="font-bold">Average score:</span>{" "}
-          <span className="text-primary">{calculateAverage(data.results)}</span>
+          <span className="text-primary">{data.results.length > 0 ? calculateAverage(data.results) : "0.00"}</span>
+        </p>
+        <p>
+          <span className="font-bold">Passing score:</span>{" "}
+          <span className="text-primary">{passingScore}</span>
         </p>
         <div className="overflow-x-auto">
           <table className="table table-zebra w-full">

@@ -38,13 +38,13 @@ export default function Home() {
         <div className="mt-10 grid grid-cols-1 gap-4 sm:grid-cols-2">
             <button
               onClick={() => router.push("/upload")} // Replace with actual upload logic
-              className="btn btn-outline btn-secondary"
+              className="btn btn-outline btn-primary"
             >
               Upload Quiz
             </button>
             <button
               onClick={() => router.push("/quiz/list")} // Replace with actual view logic
-              className="btn btn-outline btn-accent"
+              className="btn btn-outline btn-secondary"
             >
               View Results
             </button>

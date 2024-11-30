@@ -27,6 +27,8 @@ describe('Login Page E2E Tests', () => {
     cy.get('button[type="submit"]').click();
     
     cy.getCookie('token').should('have.property', 'value', 'mockToken');
+    cy.getCookie('redirect').should('exist');
+    
     cy.get('.label-text-alt').should('not.exist');
   });
 
@@ -38,7 +40,10 @@ describe('Login Page E2E Tests', () => {
     cy.get('input[name="password"]').type('123456');
     cy.get('button[type="submit"]').click();
 
-    
+    cy.getCookie('token').should('have.property', 'value', 'mockToken');
+
+    cy.url().should('eq', `${Cypress.config().baseUrl}/`);
+
     cy.get('.label-text-alt').should('not.exist');
   });
 
